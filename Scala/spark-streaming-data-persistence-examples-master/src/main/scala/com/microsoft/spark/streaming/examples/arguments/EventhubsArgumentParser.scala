@@ -33,6 +33,7 @@ object EventhubsArgumentParser {
     val checkpointDirectory: String = "/EventCheckpoint10"
     val eventCountFolder: String = "/EventCount/EventCount10"
     val eventStoreFolder: String = "/EventStore/EventStore10"
+    val eventDataLakeFolder: String = "/EventStore/EventStore10"
     val eventHiveTable: String = "EventHiveTable10"
     val sqlServerFQDN: String = "servername.database.windows.net"
     val sqlDatabaseName: String = "databasename"
@@ -105,6 +106,8 @@ object EventhubsArgumentParser {
         parseArguments(argumentMap ++ Map(Symbol(EventhubsArgumentKeys.EventCountFolder) -> value.toString), tail)
       case "--event-store-folder" :: value :: tail =>
         parseArguments(argumentMap ++ Map(Symbol(EventhubsArgumentKeys.EventStoreFolder) -> value.toString), tail)
+      case "--event-datalake-folder" :: value :: tail =>
+        parseArguments(argumentMap ++ Map(Symbol(EventhubsArgumentKeys.EventDataLakeFolder) -> value.toString), tail)
       case "--event-hive-table" :: value :: tail =>
         parseArguments(argumentMap ++ Map(Symbol(EventhubsArgumentKeys.EventHiveTable) -> value.toString), tail)
       case "--sql-server-fqdn" :: value :: tail =>

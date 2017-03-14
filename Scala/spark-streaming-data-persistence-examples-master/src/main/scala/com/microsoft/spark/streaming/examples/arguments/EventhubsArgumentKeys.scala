@@ -28,6 +28,7 @@ object EventhubsArgumentKeys extends Enumeration {
   val CheckpointDirectory: String = "checkpointDirectory"
   val EventCountFolder: String = "eventCountFolder"
   val EventStoreFolder: String = "eventStoreFolder"
+  val EventDataLakeFolder: String = "eventDataLakeFolder"
   val EventHiveTable: String = "eventHiveTable"
   val SQLServerFQDN: String = "sqlServerFQDN"
   val SQLDatabaseName: String = "sqlDatabaseName"
