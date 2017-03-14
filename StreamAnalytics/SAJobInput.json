@@ -1,0 +1,10 @@
+{  
+  “eventStartTime”: “2015-03-01 10:00”,  
+  “eventEndTime”: “2015-03-01 10:01”  
+  “numberOfEvents”: 10  
+  “serialization”:  
+        {  
+          “type”: “Json”  
+        }  
+
+}
