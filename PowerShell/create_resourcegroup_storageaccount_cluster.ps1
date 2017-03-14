@@ -2,7 +2,7 @@
 # Script to create Azure resources for SparkTwitter POC #
 #########################################################
 
-$token ="fluffybunniez"
+$token ="sparktwitter"
 $subscriptionID = "09bdd24f-995d-4329-b227-7e553a5c5fa0"        # Provide your Subscription Name
 
 $resourceGroupName = $token + "rg"      # Provide a Resource Group name
@@ -18,7 +18,7 @@ Login-AzureRmAccount
 
 # Select the subscription to use if you have multiple subscriptions
 Select-AzureRmSubscription -SubscriptionId $subscriptionID
-<#
+
 # Create an Azure Resource Group
 New-AzureRmResourceGroup -Name $resourceGroupName -Location $location
 
@@ -28,14 +28,20 @@ New-AzureRmStorageAccount `
     -StorageAccountName $defaultStorageAccountName `
     -Location $location `
     -Type Standard_LRS
-#>
+
 
 $defaultStorageAccountKey = (Get-AzureRmStorageAccountKey -Name $defaultStorageAccountName -ResourceGroupName $resourceGroupName)[0].Value
 
 
 $destContext = New-AzureStorageContext -StorageAccountName $defaultStorageAccountName -StorageAccountKey $defaultStorageAccountKey
-<#
+
 New-AzureStorageContainer -Name $defaultStorageContainerName -Context $destContext
+
+#######################################################
+#Create a new Azure Event Hub to use for Twitter data #
+#######################################################
+
+New-AzureRmResourceGroupDeployment -ResourceGroupName $resourceGroupName -TemplateFile https://raw.githubusercontent.com/azure/azure-quickstart-templates/master/201-event-hubs-create-event-hub-and-consumer-group/azuredeploy.json
 
 ##########################
 # Create Data Lake store #
@@ -50,16 +56,16 @@ Test-AzureRmDataLakeStoreAccount -Name $dataLakeStoreName
 $myrootdir = "/" # specify root directory
 New-AzureRmDataLakeStoreItem -Folder -AccountName $dataLakeStoreName -Path $myrootdir/twitterdata # Create new folder in data lake store
 Get-AzureRmDataLakeStoreChildItem -AccountName $dataLakeStoreName -Path $myrootdir # Verify successfully created
-#>
+
 # Create self-signed certificate
 
-$certificateFileDir = "C:\\Mac\Home\Documents\SparkTwitter\Certificates"
+$certificateFileDir = "C:\\Users\ethandubois\Documents\SparkTwitter\Certificates"
 
 cd $certificateFileDir
 
-makecert -sv mykey.pvk -n "cn=HDI-ADL-SP" CertFile.cer -r -len 2048
+& "C:\Program Files (x86)\Windows Kits\10\bin\x64\makecert.exe" -sv mykey.pvk -n "cn=HDI-ADL-SP" CertFile.cer -r -len 2048
 
-pvk2pfx -pvk mykey.pvk -spc CertFile.cer -pfx CertFile.pfx -po "password1"
+& "C:\Program Files (x86)\Windows Kits\10\bin\x64\pvk2pfx.exe" -pvk mykey.pvk -spc CertFile.cer -pfx CertFile.pfx -po "password1"
 
 # Create Azure AD/Service principal
 
@@ -81,6 +87,8 @@ $application = New-AzureRmADApplication `
     -StartDate $certificatePFX.NotBefore  `
     -EndDate $certificatePFX.NotAfter
 
+$application = Get-AzureRmADApplication -IdentifierUri "https://sparktwitter.ethandubois.com"
+
 $applicationId = $application.ApplicationId
 
 $servicePrincipal = New-AzureRmADServicePrincipal -ApplicationId $applicationId
@@ -88,12 +96,6 @@ $servicePrincipal = New-AzureRmADServicePrincipal -ApplicationId $applicationId
 $objectId = $servicePrincipal.Id
 
 Set-AzureRmDataLakeStoreItemAclEntry -AccountName $dataLakeStoreName -Path / -AceType User -Id $objectId -Permissions All
-
-#######################################################
-#Create a new Azure Event Hub to use for Twitter data #
-#######################################################
-
-New-AzureRmResourceGroupDeployment -ResourceGroupName $resourceGroupName -TemplateFile https://raw.githubusercontent.com/azure/azure-quickstart-templates/master/201-event-hubs-create-event-hub-and-consumer-group/azuredeploy.json
 
 ################################################################################
 # Create Stream Analytics Job to send data from event hub into data lake store #
@@ -109,7 +111,8 @@ New-AzureRmResourceGroupDeployment -ResourceGroupName $resourceGroupName -Templa
 
 # Note: currently, Azure Data Lake store output is not supported for New-AzureRmStreamAnalyticsOutput because of authorization
 # Need to log into Azure portal and configure the output to data lake store manually 
-#PS C:\>New-AzureRmStreamAnalyticsOutput -ResourceGroupName $resourceGroupName -File "C:\Output.json" -JobName "SparkTwitter-SAJob" -Name "Output"
+# PS C:\>New-AzureRmStreamAnalyticsOutput -ResourceGroupName $resourceGroupName -File "C:\Output.json" -JobName "SparkTwitter-SAJob" -Name "Output"
+
 
 ###################################
 # Create cluster with ApacheSpark #
@@ -141,7 +144,7 @@ New-AzureRmHDInsightCluster `
         -ObjectID $objectId `
         -AadTenantId $tenantID `
         -CertificateFilePath $certificateFilePath `
-        -CertificatePassword $password1
+        -CertificatePassword "password1"
 
 
 # example spark submit 

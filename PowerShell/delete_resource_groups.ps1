@@ -2,7 +2,7 @@
 Login-AzureRmAccount 
 
 # Get a list of all Azure subscript that the user can access
-$allSubs = Get-AzureRmSubscription e
+$allSubs = Get-AzureRmSubscription
 
 $allSubs | Sort-Object SubscriptionName | Format-Table -Property SubscriptionName, SubscriptionId, State
 
