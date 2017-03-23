@@ -195,7 +195,6 @@ namespace TwitterClient
         public DateTime CreatedAt;
         public string Topic;
         public int SentimentScore;
-        public string Text;
                 
         public override string ToString()
         {
