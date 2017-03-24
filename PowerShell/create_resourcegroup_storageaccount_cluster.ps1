@@ -18,7 +18,7 @@ Login-AzureRmAccount
 
 # Select the subscription to use if you have multiple subscriptions
 Select-AzureRmSubscription -SubscriptionId $subscriptionID
-<#
+
 # Create an Azure Resource Group
 New-AzureRmResourceGroup -Name $resourceGroupName -Location $location
 
@@ -58,7 +58,7 @@ $myrootdir = "/" # specify root directory
 
 New-AzureRmDataLakeStoreItem -Folder -AccountName $dataLakeStoreName -Path $myrootdir/twitterdata # Create new folder in data lake store
 Get-AzureRmDataLakeStoreChildItem -AccountName $dataLakeStoreName -Path $myrootdir # Verify successfully created
-#>
+
 # Create self-signed certificate
 
 $certificateFileDir = "C:\\Users\ethandubois\Documents\GitHub\SparkTwitter\Certificates"
