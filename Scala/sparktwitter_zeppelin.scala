@@ -21,7 +21,10 @@
      )
  ).toDF()
  
+
+// print out length of inner array to see if it's just 1 element- could be not matching the pipe character
+
  tweets.show()
 
  // Register as a temporary table called "TrumpTweets"
-// tweets.registerTempTable("TrumpTweets")
+ tweets.registerTempTable("TrumpTweets")

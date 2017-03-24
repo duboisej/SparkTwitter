@@ -1,0 +1,18 @@
+ #PySpark tweet code
+
+ from pyspark.sql.types import *
+
+ # Load the data
+ tweetText = sc.textFile("adl:///twitter/trump_1591835922_cb42b2ceef94435992a49a152020d1c6.csv")
+
+ # Create the schema
+ tweetSchema = StructType([StructField("createdAt", StringType(), False),StructField("topic", StringType(), False),StructField("sentimentScore", IntegerType(), False),StructField("processedAt", StringType(), False)])
+
+ # Parse the data in hvacText
+ tweets = tweetText.map(lambda s: s.split("|")).filter(lambda s: s[0] != "CreatedAt").map(lambda s:(str(s[0]), str(s[1]), int(s[2]), int(s[3]), str(s[6]) ))
+
+ # Create a data frame
+ tweetdf = sqlContext.createDataFrame(tweets,tweetSchema)
+
+ # Register the data fram as a table to run queries against
+ tweetdf.registerTempTable("Tweets")
