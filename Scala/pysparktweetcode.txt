@@ -3,7 +3,9 @@
  from pyspark.sql.types import *
 
  # Load the data
- tweetText = sc.textFile("adl:///twitter/trump_1591835922_cb42b2ceef94435992a49a152020d1c6.csv")
+ tweetText = sc.textFile("adl:///twitter/trump.csv")
+ tweetText = sc.textFile("https://sparktwitterstore.blob.core.windows.net/sparktwittercontainer/trump.csv")
+
 
  # Create the schema
  tweetSchema = StructType([StructField("createdAt", StringType(), False),StructField("topic", StringType(), False),StructField("sentimentScore", IntegerType(), False),StructField("processedAt", StringType(), False)])
