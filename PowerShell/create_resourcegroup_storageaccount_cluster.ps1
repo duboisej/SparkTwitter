@@ -29,7 +29,7 @@ New-AzureRmStorageAccount `
     -Location $location `
     -Type Standard_LRS
 
-
+    
 $defaultStorageAccountKey = (Get-AzureRmStorageAccountKey -Name $defaultStorageAccountName -ResourceGroupName $resourceGroupName)[0].Value
 
 
@@ -146,7 +146,9 @@ New-AzureRmHDInsightCluster `
         -ObjectID $objectId `
         -AadTenantId $tenantID `
         -CertificateFilePath $certificateFilePath `
-        -CertificatePassword "password1"
+        -CertificatePassword $password `
+        -Version "3.6"
+
 
 
 # example spark submit 
